@@ -4,17 +4,18 @@ const User = require('../models/User')
 const { body, validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
+var fetchuser = require('../middleware/fetchuser.js')
 
 const JWT_SECERT = "KunalDua";
 
-//Create user with POST "/api/auth/createUser" DOES'T require AUTH
+// ROUTE 1: Create user with POST "/api/auth/createUser" No Login required
 router.post('/createUser', [
     body('name', "Enter a valid name").isLength({ min: 3 }),
     body('email', "Enter a valid email").isEmail(),
     body('password', "Enter a valid password").isLength({ min: 5 })
 ], async (req, res) => {
     // req => request
-    // res =>
+    // res => response
 
     //if there are errors return errors
     const errors = validationResult(req);
@@ -37,10 +38,10 @@ router.post('/createUser', [
             email: req.body.email,
             password: secPass,
         });
-        const data={
-            id:user.id
+        const data = {
+            id: user.id
         }
-        const authToken = jwt.sign({ data }, 'JWD_SECERT');
+        const authToken = jwt.sign({ data }, JWT_SECERT);
         res.json(authToken)
     }
     catch (error) {
@@ -50,7 +51,7 @@ router.post('/createUser', [
 
 })
 
-//Create user with POST "/api/auth/login" DOES'T require AUTH
+//Route 2 Create user with POST "/api/auth/login" No Login required
 router.post('/login', [
     body('email', "Enter a valid email").isEmail(),
     body('password', "Enter a valid password").exists()
@@ -59,27 +60,40 @@ router.post('/login', [
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
-    const {email,password} = req.body;
+    const { email, password } = req.body;
     try {
-        let user = await User.findOne({email});
-        if(!user){
-            return res.status(400).json("Please login using correct credentails");    
+        let user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json("Please login using correct credentails");
         }
 
-        const passwordCompare=await bcrypt.compare(password,user.password);
-        if(!passwordCompare){
-            return res.status(400).json("Please login using correct credentails");    
+        const passwordCompare = await bcrypt.compare(password, user.password);
+        if (!passwordCompare) {
+            return res.status(400).json("Please login using correct credentails");
         }
 
         const data = {
-            id:user.id
+            id: user.id
         }
-        const authToken = jwt.sign(data , 'JWD_SECERT');
+        const authToken = jwt.sign(data, JWT_SECERT);
         res.json(authToken)
 
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Internal server error");
+    }
+})
+
+//Route 3 get logged in user details with POST "/api/auth/getUser" Login required 
+
+router.post('/getuser',fetchuser,async (req, res) => {
+    try {
+        userId = req.user.id;
+        const user = await User.findById(userId).select("-password");
+        res.send(user);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal server error eeeee");
     }
 })
 
