@@ -1,20 +1,25 @@
-import React from 'react'
-import { Link } from "react-router-dom";
+import React, { useEffect } from 'react'
+import { Link, useLocation } from "react-router-dom";
 export default function Navbar(props) {
+    let location = useLocation();
+    useEffect(() => {
+        console.log(location.pathname);
+    }, [location])
+
     return (
-        <nav class="navbar navbar-expand-lg bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">{props.title}</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
+        <nav className={"navbar navbar-expand-lg navbar-dark bg-dark"}>
+            <div className="container-fluid">
+                <Link className="navbar-brand" to="/">{props.title}</Link>
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span className="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <Link class="nav-link active" aria-current="page" to="/">Home</Link>
+                <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li className="nav-item">
+                            <Link className={`nav-link ${location.pathname === "/" ? "active" : ""}`} aria-current="page" to="/">Home</Link>
                         </li>
-                        {/* <li class="nav-item">
-                            <Link class="nav-link" href="/about">About</Link>
-                        </li> */}
+                        <li className="nav-item">
+                            <Link className={`nav-link ${location.pathname === "/About" ? "active" : ""}`} to="About">About</Link>
+                        </li>
                     </ul>
                 </div>
             </div>
