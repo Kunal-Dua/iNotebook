@@ -35,7 +35,7 @@ const getNotes = async() => {
     const json= response.json(); 
 
     const note_added = {
-      "_id": "62c5f3d444b903489f53456bf9d9",
+      "_id": "62ca241d8d18ef3f6ea6018d",
       "user": "62bf145eef51e8e34ee51d87",
       "title": title,
       "description": description,
@@ -70,7 +70,16 @@ const getNotes = async() => {
     }
   }
   //delete note
-  const deleteNote = (id) => {
+  const deleteNote = async(id) => {
+    //api call
+    const response = await fetch(`${host}/api/notes/deletenote/${id}`, {
+      method: 'DELETE', 
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token':"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYmYxNDVlZWY1MWU4ZTM0ZWU1MWQ4NyIsImlhdCI6MTY1NjY4OTc2Mn0.MEdvHv7pMMaTKVjS11NgKOxQppoRCncZ8GmtrPuDDL0"
+      }
+    });
+    const json= response.json(); 
     const newNote=note.filter((note_added) => { return note_added._id !== id });
     setNote(newNote);
   }
