@@ -19,14 +19,15 @@ router.post('/createUser', [
 
     //if there are errors return errors
     const errors = validationResult(req);
+    let success=false;
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({success, errors: errors.array() });
     }
     try {
         let user = await User.findOne({ email: req.body.email });
 
         if (user) {
-            return res.status(400).json({ error: "Email aready exists" });
+            return res.status(400).json({ success,error: "Email aready exists" });
         }
 
         const salt = await bcrypt.genSaltSync(10);
@@ -42,7 +43,8 @@ router.post('/createUser', [
             id: user.id
         }
         const authToken = jwt.sign({ data }, JWT_SECERT);
-        res.json(authToken)
+        success=true;
+        res.json({success,authToken})
     }
     catch (error) {
         console.error(error.message);

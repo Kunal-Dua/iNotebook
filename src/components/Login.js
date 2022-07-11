@@ -1,19 +1,29 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Alert from './Alert';
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ email: "", password: "" })
+  let history = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch(`http://localhost:4000/api/auth/login`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        // 'auth-token': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyYmYxNDVlZWY1MWU4ZTM0ZWU1MWQ4NyIsImlhdCI6MTY1NjY4OTc2Mn0.MEdvHv7pMMaTKVjS11NgKOxQppoRCncZ8GmtrPuDDL0"
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ email: credentials.email, password: credentials.password })
     });
     const json = await response.json();
     console.log(json);
+    if (json.success) {
+      //save auth token
+      localStorage.setItem('token', json.authToken);
+      history("/");
+    }
+    else {
+      <Alert message="Login Failed!!!" type="danger" />
+    }
   }
 
   const onChange = (e) => {

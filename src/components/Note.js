@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
+import { useNavigate } from 'react-router-dom'
 import noteContext from "../context/notes/noteContext";
 import AddNote from "./AddNote";
 import NoteItem from "./NoteItem";
@@ -8,6 +9,7 @@ const Note = () => {
     const { note, getNotes, editNote } = context;
     const ref = useRef(null);
     const refClose = useRef(null);
+    let history = useNavigate();
     const updateNote = (currentnote) => {
         ref.current.click();
         setnote({ id: currentnote._id, etitle: currentnote.title, edescription: currentnote.description, etag: currentnote.tag });
@@ -23,7 +25,12 @@ const Note = () => {
     }
 
     useEffect(() => {
-        getNotes();
+        if (localStorage.getItem('token')) {
+            getNotes();
+        }
+        else {
+            history("/login");
+        }
         // eslint-disable-next-line
     }, [])
 
@@ -47,11 +54,11 @@ const Note = () => {
                                 <form>
                                     <div className=" mb-3">
                                         <label htmlFor="etitle" className="form-label">Edit note title</label>
-                                        <input type="text" className="form-control" id="etitle" name="etitle" aria-describedby="emailHelp" value={Enote.etitle} onChange={onChange} minLength={5} required/>
+                                        <input type="text" className="form-control" id="etitle" name="etitle" aria-describedby="emailHelp" value={Enote.etitle} onChange={onChange} minLength={5} required />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="edescription" className="form-label">Edit note description</label>
-                                        <input type="text" className="form-control" id="edescription" name="edescription" value={Enote.edescription} onChange={onChange} minLength={5} required/>
+                                        <input type="text" className="form-control" id="edescription" name="edescription" value={Enote.edescription} onChange={onChange} minLength={5} required />
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="etag" className="form-label">Edit note tag</label>
@@ -68,8 +75,8 @@ const Note = () => {
                 </div>
 
                 <h2>Your Notes</h2>
-                <div className="container mx-2"> 
-                {Note.length===0 && 'No notes to display'}
+                <div className="container mx-2">
+                    {Note.length === 0 && 'No notes to display'}
                 </div>
                 {note.map((Note) => {
                     return <NoteItem key={Note._id} updateNote={updateNote} note={Note} />
