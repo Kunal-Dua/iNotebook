@@ -27,8 +27,6 @@ const Note = () => {
         // eslint-disable-next-line
     }, [])
 
-
-
     return (
         <>
             <AddNote />
@@ -49,11 +47,11 @@ const Note = () => {
                                 <form>
                                     <div className=" mb-3">
                                         <label htmlFor="etitle" className="form-label">Edit note title</label>
-                                        <input type="text" className="form-control" id="etitle" name="etitle" aria-describedby="emailHelp" value={Enote.etitle} onChange={onChange} />
+                                        <input type="text" className="form-control" id="etitle" name="etitle" aria-describedby="emailHelp" value={Enote.etitle} onChange={onChange} minLength={5} required/>
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="edescription" className="form-label">Edit note description</label>
-                                        <input type="text" className="form-control" id="edescription" name="edescription" value={Enote.edescription} onChange={onChange} />
+                                        <input type="text" className="form-control" id="edescription" name="edescription" value={Enote.edescription} onChange={onChange} minLength={5} required/>
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="etag" className="form-label">Edit note tag</label>

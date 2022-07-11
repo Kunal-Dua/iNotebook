@@ -22,6 +22,10 @@ export default function Navbar(props) {
                         </li>
                     </ul>
                 </div>
+                <div className='d-flex'>
+                <Link className="btn btn-primary mx-2" to="Signup" role="button">Sign Up</Link>
+                <Link className="btn btn-primary mx-2" to="Login" role="button">Login</Link>
+                </div>
             </div>
         </nav>
     )

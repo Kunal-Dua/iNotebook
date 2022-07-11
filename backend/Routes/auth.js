@@ -57,6 +57,7 @@ router.post('/login', [
     body('password', "Enter a valid password").exists()
 ], async (req, res) => {
     const errors = validationResult(req);
+    // let success = false;
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
@@ -64,19 +65,20 @@ router.post('/login', [
     try {
         let user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json("Please login using correct credentails");
+            return res.status(400).json({  error: "Please login using correct credentails" });
         }
 
         const passwordCompare = await bcrypt.compare(password, user.password);
         if (!passwordCompare) {
-            return res.status(400).json("Please login using correct credentails");
+            return res.status(400).json({  error: "Please login using correct credentails" });
         }
 
         const data = {
             id: user.id
         }
         const authToken = jwt.sign(data, JWT_SECERT);
-        res.json(authToken)
+        success = true;
+        res.json( authToken)
 
     } catch (error) {
         console.error(error.message);
@@ -86,7 +88,7 @@ router.post('/login', [
 
 //Route 3 get logged in user details with POST "/api/auth/getUser" Login required 
 
-router.post('/getuser',fetchuser,async (req, res) => {
+router.post('/getuser', fetchuser, async (req, res) => {
     try {
         userId = req.user.id;
         const user = await User.findById(userId).select("-password");
