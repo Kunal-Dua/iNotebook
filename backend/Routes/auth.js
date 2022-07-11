@@ -57,7 +57,7 @@ router.post('/login', [
     body('password', "Enter a valid password").exists()
 ], async (req, res) => {
     const errors = validationResult(req);
-    // let success = false;
+    let success = false;
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
@@ -65,12 +65,12 @@ router.post('/login', [
     try {
         let user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({  error: "Please login using correct credentails" });
+            return res.status(400).json({ success, error: "Please login using correct credentails" });
         }
 
         const passwordCompare = await bcrypt.compare(password, user.password);
         if (!passwordCompare) {
-            return res.status(400).json({  error: "Please login using correct credentails" });
+            return res.status(400).json({ success, error: "Please login using correct credentails" });
         }
 
         const data = {
@@ -78,7 +78,7 @@ router.post('/login', [
         }
         const authToken = jwt.sign(data, JWT_SECERT);
         success = true;
-        res.json( authToken)
+        res.json({success, authToken})
 
     } catch (error) {
         console.error(error.message);
